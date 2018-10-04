@@ -2,8 +2,9 @@
 
 # Echo client program
 import socket, sys, re
-sys.path.append("../lib")       # for params
-import params
+# sys.path.append("../lib")       # for params
+# import params
+from lib import params
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),

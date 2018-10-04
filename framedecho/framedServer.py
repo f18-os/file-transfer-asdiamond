@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
-sys.path.append("../lib")       # for params
-import sys, re, socket, params
+# sys.path.append("../lib")       # for params
+import sys, re, socket
+from lib import params
+from framedecho import framedSock as fs
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
@@ -28,12 +30,10 @@ sock, addr = lsock.accept()
 print("connection rec'd from", addr)
 
 
-from framedSock import framedSend, framedReceive
-
 while True:
-    payload = framedReceive(sock, debug)
+    payload = fs.framedReceive(sock, debug)
     if debug: print("rec'd: ", payload)
     if not payload:
         break
     payload += b"!"             # make emphatic!
-    framedSend(sock, payload, debug)
+    fs.framedSend(sock, payload, debug)

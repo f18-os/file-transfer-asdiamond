@@ -1,29 +1,27 @@
 #! /usr/bin/env python3
 
 # Echo client program
-import socket, sys, re
+import re
+import socket
+import sys
 
-sys.path.append("../lib")       # for params
-import params
-
-from framedSock import framedSend, framedReceive
-
+# framed send and framed receive
+from framedecho import framedSock as fs
+from lib import params
 
 switchesVarDefaults = (
-    (('-s', '--server'), 'server', "127.0.0.1:50001"),
-    (('-d', '--debug'), "debug", False), # boolean (set if present)
-    (('-?', '--usage'), "usage", False), # boolean (set if present)
-    )
-
+    (('-s', '--server'), 'server', "127.0.0.1:50000"),
+    (('-d', '--debug'), "debug", False),  # boolean (set if present)
+    (('-?', '--usage'), "usage", False),  # boolean (set if present)
+)
 
 progname = "framedClient"
 paramMap = params.parseParams(switchesVarDefaults)
 
-server, usage, debug  = paramMap["server"], paramMap["usage"], paramMap["debug"]
+server, usage, debug = paramMap["server"], paramMap["usage"], paramMap["debug"]
 
 if usage:
     params.usage()
-
 
 try:
     serverHost, serverPort = re.split(":", server)
@@ -56,12 +54,10 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
+print("sending hello world")
+fs.framedSend(s, b"hello world", debug)
+print("received:", fs.framedReceive(s, debug))
 
 print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
-
-print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
-
+fs.framedSend(s, b"hello world", debug)
+print("received:", fs.framedReceive(s, debug))
