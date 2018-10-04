@@ -6,7 +6,7 @@ from lib import params
 from framedecho import framedSock as fs
 
 switchesVarDefaults = (
-    (('-l', '--listenPort'), 'listenPort', 50001),
+    (('-l', '--listenPort'), 'listenPort', 50000),
     (('-d', '--debug'), "debug", False),  # boolean (set if present)
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
