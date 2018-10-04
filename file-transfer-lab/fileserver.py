@@ -32,15 +32,19 @@ def main():
             print(f'child handling connection from {addr}')
             while True:
                 # the first thing sent should be the filename
-                # if everything is ok the file will come after
                 filename = fs.framedReceive(sock, debug).decode('utf-8')
                 print(f"filename:{filename}")
+                # next thing is put or get
+                action = fs.framedReceive(sock, debug).decode('utf-8')
 
-                # now just write file
-                writer = open(filename + '-SERVER', 'w')
-                writer.write(fs.framedReceive(sock, debug).decode('utf-8'))
-                sys.exit(0)  # everything is fine
-
+                if action == 'put':  # now just write file
+                    writer = open(filename + '-SERVER', 'w')
+                    writer.write(fs.framedReceive(sock, debug).decode('utf-8'))
+                    sys.exit(0)  # everything is fine
+                elif action == 'get':  # give them the file
+                    file = open(filename).read()
+                    fs.framedSend(sock, file.encode('utf-8'))
+                    sys.exit(0)
 
 
 if __name__ == '__main__':

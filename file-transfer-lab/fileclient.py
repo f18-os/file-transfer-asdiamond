@@ -10,7 +10,7 @@ from framedecho import framedSock as fs
 from lib import params
 
 switchesVarDefaults = (
-    (('-s', '--server'), 'server', "127.0.0.1:50000"),
+    (('-s', '--server'), 'server', "127.0.0.1:50001"),
     (('-d', '--debug'), "debug", False),  # boolean (set if present)
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
@@ -57,17 +57,31 @@ def main():
         sys.exit(1)
 
     # send the filename and wait for ok response signaling server created file
-    filename = 'kirk.txt'
-    file = open(filename, 'r').read()
+    filename = 'soldiers.txt'
+    action = 'get'
     s = safe_connect(serverHost, serverPort)
     print('connected')
+
     # send filename
     fs.framedSend(s, filename.encode('utf-8'), debug)
     print(f'sent filename: {filename}')
 
-    # send file
-    print('sending file')
-    fs.framedSend(s, file.encode('utf-8'))
+    # send action
+    fs.framedSend(s, action.encode('utf-8'))
+    print(f'sent action: {action}')
+
+    if action == 'put':
+        # send file
+        print('reading file')
+        file = open(filename, 'r').read()
+        print('sending file')
+        fs.framedSend(s, file.encode('utf-8'))
+    elif action == 'get':
+        print('getting file')
+        file = fs.framedReceive(s, debug).decode('utf-8')
+        print('writting file')
+        filename += '-CLIENT'
+        open(filename, 'w').write(file)
 
     print('it is done.')
 
