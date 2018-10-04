@@ -1,21 +1,21 @@
 #! /usr/bin/env python3
 
 # Echo client program
-import socket, sys, re
-# sys.path.append("../lib")       # for params
-# import params
+import re
+import socket
+import sys
+
 from lib import params
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
-    (('-?', '--usage'), "usage", False), # boolean (set if present)
-    )
-
+    (('-?', '--usage'), "usage", False),  # boolean (set if present)
+)
 
 progname = "framedClient"
 paramMap = params.parseParams(switchesVarDefaults)
 
-server, usage  = paramMap["server"], paramMap["usage"]
+server, usage = paramMap["server"], paramMap["usage"]
 
 if usage:
     params.usage()
@@ -62,7 +62,7 @@ print("Received '%s'" % data)
 print("sending '%s'" % outMessage)
 s.send(outMessage.encode())
 
-s.shutdown(socket.SHUT_WR)      # no more output
+s.shutdown(socket.SHUT_WR)  # no more output
 
 while 1:
     data = s.recv(1024).decode()
