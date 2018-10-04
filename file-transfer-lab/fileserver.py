@@ -38,8 +38,14 @@ def main():
                 action = fs.framedReceive(sock, debug).decode('utf-8')
 
                 if action == 'put':  # now just write file
-                    writer = open(filename + '-SERVER', 'w')
-                    writer.write(fs.framedReceive(sock, debug).decode('utf-8'))
+                    if os.access(filename, os.R_OK | os.W_OK):
+                        print('file already exists here SORRY')
+                        sys.exit(1)
+                    writer = open(filename, 'w')
+                    file = fs.framedReceive(sock, debug).decode('utf-8')
+                    if len(file) < 1:
+                        print('file must not be empty')
+                    writer.write(file)
                     sys.exit(0)  # everything is fine
                 elif action == 'get':  # give them the file
                     file = open(filename).read()

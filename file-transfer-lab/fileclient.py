@@ -58,7 +58,7 @@ def main():
 
     # send the filename and wait for ok response signaling server created file
     filename = 'soldiers.txt'
-    action = 'get'
+    action = 'put'
     s = safe_connect(serverHost, serverPort)
     print('connected')
 
@@ -73,7 +73,11 @@ def main():
     if action == 'put':
         # send file
         print('reading file')
-        file = open(filename, 'r').read()
+        try:
+            file = open(filename, 'r').read()
+        except:
+            print('problem opening file, exiting')
+            sys.exit(1)
         print('sending file')
         fs.framedSend(s, file.encode('utf-8'))
     elif action == 'get':
