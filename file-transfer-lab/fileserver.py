@@ -1,12 +1,14 @@
 #! /usr/bin/env python3
 
 import socket
+import os
+import sys
 
 from framedecho import framedSock as fs
 from lib import params
 
 switchesVarDefaults = (
-    (('-l', '--listenPort'), 'listenPort', 50000),
+    (('-l', '--listenPort'), 'listenPort', 50001),
     (('-d', '--debug'), "debug", False),  # boolean (set if present)
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
@@ -23,17 +25,22 @@ def main():
     lsock.bind(bindAddr)
     lsock.listen(5)
     print("listening on:", bindAddr)
-    sock, addr = lsock.accept()
-    print("connection rec'd from", addr)
+    while True:
+        sock, addr = lsock.accept()
 
-    # the first thing sent should be the filename
-    # if everything is ok the file will come after
-    filename = fs.framedReceive(sock, debug).decode('utf-8')
-    print(f"filename:{filename}")
+        if not os.fork():
+            print(f'child handling connection from {addr}')
+            while True:
+                # the first thing sent should be the filename
+                # if everything is ok the file will come after
+                filename = fs.framedReceive(sock, debug).decode('utf-8')
+                print(f"filename:{filename}")
 
-    # now just write file
-    writer = open(filename + '-SERVER', 'w')
-    writer.write(fs.framedReceive(sock, debug).decode('utf-8'))
+                # now just write file
+                writer = open(filename + '-SERVER', 'w')
+                writer.write(fs.framedReceive(sock, debug).decode('utf-8'))
+                sys.exit(0)  # everything is fine
+
 
 
 if __name__ == '__main__':
