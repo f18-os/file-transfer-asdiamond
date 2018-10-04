@@ -44,7 +44,6 @@ def safe_connect(serverHost, serverPort):
 
 
 def main():
-    # progname = "framedClient"
     paramMap = params.parseParams(switchesVarDefaults)
     server, usage, debug = paramMap["server"], paramMap["usage"], paramMap["debug"]
     if usage:
@@ -57,14 +56,23 @@ def main():
         print("Can't parse server:port from '%s'" % server)
         sys.exit(1)
 
+    # send the filename and wait for ok response signaling server created file
+    filename = 'kirk.txt'
+    file = open(filename, 'r').read()
     s = safe_connect(serverHost, serverPort)
+    print('connected')
+    # send filename
+    fs.framedSend(s, filename.encode('utf-8'), debug)
+    print(f'sent filename: {filename}')
 
-    print("sending hello world")
-    fs.framedSend(s, b"hello world", debug)
-    print("received:", fs.framedReceive(s, debug))
-    print("sending hello world")
-    fs.framedSend(s, b"hello world", debug)
-    print("received:", fs.framedReceive(s, debug))
+    # send file
+    print('sending file')
+    fs.framedSend(s, file.encode('utf-8'))
+
+    print('it is done.')
+
+
+
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import re
 
 
-def framedSend(sock, payload, debug=0):
+def framedSend(sock, payload: bytes, debug=0):
     if debug: print("framedSend: sending %d byte message" % len(payload))
     msg = str(len(payload)).encode() + b':' + payload
     while len(msg):
@@ -12,7 +12,8 @@ def framedSend(sock, payload, debug=0):
 rbuf = b""  # static receive buffer
 
 
-def framedReceive(sock, debug=0):
+# returns class byte or None
+def framedReceive(sock, debug=0) -> bytes:
     global rbuf
     state = "getLength"
     msgLength = -1

@@ -6,7 +6,7 @@ from lib import params
 from framedecho import framedSock as fs
 
 switchesVarDefaults = (
-    (('-l', '--listenPort'), 'listenPort', 50001),
+    (('-l', '--listenPort'), 'listenPort', 50000),
     (('-d', '--debug'), "debug", False),  # boolean (set if present)
     (('-?', '--usage'), "usage", False),  # boolean (set if present)
 )
@@ -34,5 +34,6 @@ while True:
     if debug: print("rec'd: ", payload)
     if not payload:
         break
+    print(f'payload:{payload}')
     payload += b"!"  # make emphatic!
     fs.framedSend(sock, payload, debug)
